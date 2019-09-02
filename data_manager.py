@@ -1,24 +1,26 @@
 import random
-from sklearn.model_selection import KFold
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 class DataManager:
 
-    X = []
-    Y = []
+
 
     def __init__(self, filename, validations_percentage=0.1, test_percentage=0.2):
 
         self.validations_percentage = validations_percentage
         self.test_percentage = test_percentage
         self.filename = filename
+        self.X = []
+        self.Y = []
         self.load_data()
+
 
     def load_data(self):
 
         with open('Dataset/' + self.filename, 'r') as file:
-
+            self.X = []
+            self.Y = []
             categorical = {}
 
             for line in file.readlines():
@@ -77,9 +79,9 @@ class DataManager:
             y_TESTS.append(Y_shuffled[split_point1:split_point2])
 
         if validation:
-            return validation_X, validation_Y, x_TRAINS, y_TRAINS, x_TESTS, y_TESTS
+            return np.array(validation_X), np.array(validation_Y), np.array(x_TRAINS), np.array(y_TRAINS), np.array(x_TESTS), np.array(y_TESTS)
         else:
-            return x_TRAINS, y_TRAINS, x_TESTS, y_TESTS
+            return np.array(x_TRAINS), np.array(y_TRAINS), np.array(x_TESTS), np.array(y_TESTS)
 
 
 
