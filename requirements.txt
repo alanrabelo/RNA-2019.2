@@ -2,3 +2,5 @@ numpy
 matplotlib
 sklearn
 pylint
+plotly
+pandas
