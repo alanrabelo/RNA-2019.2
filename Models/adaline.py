@@ -1,11 +1,13 @@
 import numpy as np
 from data_manager import DataManager
 import matplotlib.pyplot as plt
+import math
+
 plt.style.use('seaborn-whitegrid')
 
 class Adaline():
 
-    def __init__(self, epochs=100, learning_rate=0.001):
+    def __init__(self, epochs=1000, learning_rate=0.01):
         self.epochs = epochs
         self.weights = []
         self.learning_rate = learning_rate
@@ -14,12 +16,12 @@ class Adaline():
 
         self.x = x
         self.y = Y
-        weights = [0, 0]
+        weights = np.zeros(len(x[0]) + 1)
         errors_in_epochs = []
         for epoch in range(self.epochs):
 
             error_count = 0
-
+            learning_rate = self.step_decay(epoch)
             for index, input in enumerate(x):
 
                 input = np.insert(input, 0, -1)
@@ -30,8 +32,8 @@ class Adaline():
                 d = Y[index]
                 e = d - y
 
-                error_count += e**2
-                weights = weights + (e * input * self.learning_rate)
+                error_count += e
+                weights = weights + (e * input * learning_rate)
 
             if epoch > 0 and error_count**0.5 < 0.2:
                 errors_in_epochs.append(1)
@@ -40,14 +42,21 @@ class Adaline():
 
             errors_in_epochs.append(error_count**0.5)
 
-        # self.plot_error_graph(errors_in_epochs, dataset)
+        self.plot_error_graph(errors_in_epochs, dataset)
         return weights
+
+    def step_decay(self, epoch):
+        initial_lrate = 0.1
+        drop = 0.5
+        epochs_drop = 10.0
+        lrate = initial_lrate * math.pow(drop, math.floor((1 + epoch) / epochs_drop))
+        return lrate
 
     def predict(self, data_input):
 
         data_input = np.insert(data_input, 0, -1)
         u = data_input.dot(self.weights)
-        return 1 if u > 0 else 0
+        return u
 
     def evaluate(self, X, Y):
 
