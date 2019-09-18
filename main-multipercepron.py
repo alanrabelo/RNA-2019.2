@@ -2,54 +2,69 @@ from Models.adaline import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from Dataset.datasets import Datasets
+from data_manager import DataManager
 import matplotlib
 matplotlib.interactive(True)
 # ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
 import random
 from Models.multi_perceptron import MultiPerceptron
-
-c1 = [0.5, 5.0]
-c2 = [3.5, 1.0]
-c3 = [6.5, 5.0]
-
-dataset = []
-
-colors = ['r', 'g', 'b']
-for index, c in enumerate([c1, c2, c3]):
-    datinha = []
-    for j in range(0, 50):
-        random1 = random.uniform(-1, 1)
-        random2 = random.uniform(-1, 1)
-        new_value = c.copy()
-        new_value[0] += random1
-        new_value[1] += random2
-        new_value.append(index)
-        dataset.append(new_value)
+#
+# c1 = [0.5, 5.0]
+# c2 = [3.5, 1.0]
+# c3 = [6.5, 5.0]
+#
+# dataset = []
+#
+# file = open('Dataset/artificial_3C.data', 'w')
+#
+# colors = ['r', 'g', 'b']
+# for index, c in enumerate([c1, c2, c3]):
+#     datinha = []
+#     for j in range(0, 50):
+#         random1 = random.uniform(-1, 1)
+#         random2 = random.uniform(-1, 1)
+#         new_value = c.copy()
+#         new_value[0] += random1
+#         new_value[1] += random2
+#         new_value.append(index)
+#         dataset.append(new_value)
+#         file.write('%s,%s,%s\n' % (new_value[0], new_value[1], index))
+#
+# file.close()
         # datinha.append(new_value)
     # datinha = np.array(datinha)
     # plt.plot(datinha[:, 0], datinha[:, 1], colors[index]+'o')
 
 # plt.show()
+#
+# print(dataset)
+datasets = [Datasets.IRIS, Datasets.CANCER,  Datasets.DERMATOLOGY, Datasets.COLUNA]
+datasets = [Datasets.ARTIFICIAL]
+datasets = [Datasets.ARTIFICIAL, Datasets.IRIS]
 
-print(dataset)
-datasets = [Datasets.IRIS, Datasets.CANCER, Datasets.DERMATOLOGY, Datasets.COLUNA]
-perceptron_results = []
+for dataset in datasets:
 
-for index in range(0, 50):
-    print(index)
-    perceptron = MultiPerceptron(number_of_classes=3)
-    x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = perceptron.split_train_test(dataset)
+    perceptron_results = []
 
-    result = perceptron.fit(x_TRAINS, y_TRAINS, 'Caso 1', error_graph=True)
-    perceptron.weights = result
+    for index in range(0, 1):
 
-    perceptron_results.append(perceptron.evaluate(x_TESTS, y_TESTS))
+        print(index)
+        data_manager = DataManager(dataset)
+        x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = data_manager.split_train_test_5fold()
 
-    # if index == 0:
-        # perceptron.plot_decision_surface(x_TRAINS, x_TESTS, y_TRAINS, y_TESTS)
+        perceptron = MultiPerceptron(activation='sigmoidal')
 
-print('Accuracy: %.2f' % np.average(perceptron_results))
-print('Stand De: %.2f%%' % np.std(perceptron_results))
+        for fold in range(0, 1):
+
+            # result = perceptron.fit(x_TRAINS[fold], y_TRAINS[fold], dataset.value, error_graph=True)
+            # perceptron.weights = result
+
+            # perceptron_results.append(perceptron.evaluate(x_TESTS[fold], y_TESTS[fold]))
+            perceptron.plot_decision_surface(x_TRAINS[fold], x_TESTS[fold], y_TRAINS[fold], y_TESTS[fold], name=dataset)
+
+    print(dataset)
+    print('Accuracy: %.2f' % np.average(perceptron_results))
+    print('Stand De: %.2f%%' % np.std(perceptron_results))
 
 
 # input, output = generate_f2()

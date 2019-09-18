@@ -10,7 +10,7 @@ class DataManager:
 
         self.validations_percentage = validations_percentage
         self.test_percentage = test_percentage
-        self.filename = filename
+        self.filename = filename.value
         self.X = []
         self.Y = []
         self.load_data()
@@ -24,12 +24,13 @@ class DataManager:
             categorical = {}
 
             for line in file.readlines():
-
+                if line == '' or '?' in line:
+                    continue
                 input_formatted = []
 
                 line = line.replace('\n', '')
-                output = line.split(',')[-1]
-                input = line.split(',')[:-1]
+                output = line.split(' ' if self.filename == 'column_3C.data' else ',')[-1]
+                input = line.split(' ' if self.filename == 'column_3C.data' else ',')[:-1]
 
                 for value in input:
                     try:
@@ -46,11 +47,30 @@ class DataManager:
                     categorical[output] = len(categorical.keys())
                     self.Y.append(categorical[output])
 
-
+            if self.filename == 'breast-cancer-wisconsin.data':
+                self.X = list(np.array(self.X)[:, 1:])
             scaler = MinMaxScaler(feature_range=(0, 1))
-            self.X = scaler.fit_transform(self.X)
+            x = scaler.fit_transform(self.X)
+            self.X = x
+
+    def one_hot_encoding(self, y_labels):
+
+        result = []
+        values_dict = {}
+
+        for label in y_labels:
+
+            if not label in values_dict:
+                output = np.zeros(len(set(y_labels)))
+                output[len(values_dict.keys())] = 1
+                values_dict[label] = output
+            result.append(values_dict[label])
+
+        return np.array(result, dtype=int)
 
     def split_train_test_5fold(self, validation=False):
+
+        self.Y = self.one_hot_encoding(self.Y)
 
         c = list(zip(np.array(self.X), np.array(self.Y)))
         random.shuffle(c)
