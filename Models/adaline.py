@@ -7,7 +7,7 @@ plt.style.use('seaborn-whitegrid')
 
 class Adaline():
 
-    def __init__(self, epochs=1000, learning_rate=0.01):
+    def __init__(self, epochs=5000, learning_rate=0.01):
         self.epochs = epochs
         self.weights = []
         self.learning_rate = learning_rate

@@ -1,7 +1,7 @@
 from enum import Enum
 
 class Datasets(Enum):
-    SETOSA = 'setosa.data'
-    VERSICOLOR = 'versicolor.data'
-    VIRGINICA = 'virginica.data'
-    ARTIFICIAL = 'artificial.data'
+    IRIS = 'iris.data'
+    CANCER = 'breast-cancer-wisconsin.data'
+    COLUNA = 'column_3C.data'
+    DERMATOLOGY = 'dermatology.data'

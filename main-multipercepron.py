@@ -1,89 +1,55 @@
-import random
-import numpy as np
-from mpl_toolkits import mplot3d
-
-from data_manager import *
 from Models.adaline import *
-from Dataset.datasets import Datasets
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from Dataset.datasets import Datasets
 import matplotlib
 matplotlib.interactive(True)
 # ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
+import random
+from Models.multi_perceptron import MultiPerceptron
 
-datasets = [Datasets.SETOSA, Datasets.VIRGINICA, Datasets.VERSICOLOR, Datasets.ARTIFICIAL]
-ELEMENTOS = 100
+c1 = [0.5, 5.0]
+c2 = [3.5, 1.0]
+c3 = [6.5, 5.0]
 
-artificial_1 = []
-results = []
+dataset = []
 
-def f1(x):
-    return 5 * x[0] + 3
+colors = ['r', 'g', 'b']
+for index, c in enumerate([c1, c2, c3]):
+    datinha = []
+    for j in range(0, 50):
+        random1 = random.uniform(-1, 1)
+        random2 = random.uniform(-1, 1)
+        new_value = c.copy()
+        new_value[0] += random1
+        new_value[1] += random2
+        new_value.append(index)
+        dataset.append(new_value)
+        # datinha.append(new_value)
+    # datinha = np.array(datinha)
+    # plt.plot(datinha[:, 0], datinha[:, 1], colors[index]+'o')
 
-def f2(x):
-    return 5 * x[0] - 3 * x[1] + 5
+# plt.show()
 
+print(dataset)
+datasets = [Datasets.IRIS, Datasets.CANCER, Datasets.DERMATOLOGY, Datasets.COLUNA]
+perceptron_results = []
 
-def generate_f2():
+for index in range(0, 50):
+    print(index)
+    perceptron = MultiPerceptron(number_of_classes=3)
+    x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = perceptron.split_train_test(dataset)
 
-    input = []
-    output = []
+    result = perceptron.fit(x_TRAINS, y_TRAINS, 'Caso 1', error_graph=True)
+    perceptron.weights = result
 
-    for i in range(0, 20):
-        for j in range(0, 20):
-            x = [i/100.0, j/100.0]
-            input.append(x)
+    perceptron_results.append(perceptron.evaluate(x_TESTS, y_TESTS))
 
-            noise = random.uniform(-1, 1)
-            result = f2(x) + noise * 0.1
-            output.append(result)
+    # if index == 0:
+        # perceptron.plot_decision_surface(x_TRAINS, x_TESTS, y_TRAINS, y_TESTS)
 
-    return np.array(input), np.array(output)
-
-
-for elemento in range(ELEMENTOS):
-
-    noise = random.uniform(-1, 1)
-    x = [elemento/100]
-    result = f1(x) + noise*0.05
-    artificial_1.append(x)
-    results.append(result)
-
-adaline_results = []
-
-for index in range(0, 30):
-
-    s = np.arange(0, len(artificial_1), 1)
-
-    np.random.shuffle(s)
-    x_data = np.array(artificial_1)[s]
-    x_label = np.array(results)[s]
-    split_point = round(len(s)*0.8)
-    train_indexes = s[:split_point]
-    test_indexes = s[split_point:]
-
-    x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = (x_data[train_indexes], x_label[train_indexes], x_data
-    [test_indexes], x_label[test_indexes])
-
-    adaline = Adaline()
-    result = adaline.fit(x_TRAINS, y_TRAINS, 'Caso 1')
-    adaline.weights = result
-
-    if index == 0:
-        x = np.linspace(0, 1, 100)  # 100 linearly spaced numbers
-        y = result[-1] * x + -1 * result[0]  # computing the values of sin(x)/x
-        plt.plot(x_TRAINS, y_TRAINS, 'ro')
-        plt.plot(x_TESTS, y_TESTS, 'bo')
-        plt.plot(x, y, 'y')
-        plt.ylabel('Y')
-        plt.xlabel('f(x) = 5x + 3')
-        plt.show()
-
-    adaline_results.append(adaline.evaluate(x_TESTS, y_TESTS))
-
-print('MSE: %.2f' % np.average(adaline_results))
-print('RMSE: %.2f' % np.average(np.array(adaline_results)**0.5))
-print('Stand De: %.2f%%' % np.std(adaline_results))
+print('Accuracy: %.2f' % np.average(perceptron_results))
+print('Stand De: %.2f%%' % np.std(perceptron_results))
 
 
 # input, output = generate_f2()
@@ -140,3 +106,4 @@ print('Stand De: %.2f%%' % np.std(adaline_results))
     # # plt.ylabel('some numbers')
     # plt.show()
     # plt.close()
+
