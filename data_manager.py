@@ -4,8 +4,6 @@ import numpy as np
 
 class DataManager:
 
-
-
     def __init__(self, filename, validations_percentage=0.1, test_percentage=0.2):
 
         self.validations_percentage = validations_percentage

@@ -6,3 +6,4 @@ class Datasets(Enum):
     COLUNA = 'column_3C.data'
     DERMATOLOGY = 'dermatology.data'
     ARTIFICIAL = 'artificial_3C.data'
+    ARTIFICIAL_XOR = 'artificial_XOR.data'

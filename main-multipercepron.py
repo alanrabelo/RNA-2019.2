@@ -58,7 +58,6 @@ for dataset in datasets:
 
             # result = perceptron.fit(x_TRAINS[fold], y_TRAINS[fold], dataset.value, error_graph=True)
             # perceptron.weights = result
-
             # perceptron_results.append(perceptron.evaluate(x_TESTS[fold], y_TESTS[fold]))
             perceptron.plot_decision_surface(x_TRAINS[fold], x_TESTS[fold], y_TRAINS[fold], y_TESTS[fold], name=dataset)
 
