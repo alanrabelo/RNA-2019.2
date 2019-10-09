@@ -4,3 +4,4 @@ sklearn
 pylint
 plotly
 pandas
+cupy

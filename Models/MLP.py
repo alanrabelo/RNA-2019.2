@@ -15,6 +15,7 @@ class MultiLayerPerceptron():
         self.activation = activation
         self.hidden_number = hidden_number
 
+
     def sigmoid(self, x):
 
         y_sig = []
