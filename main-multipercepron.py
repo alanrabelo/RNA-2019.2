@@ -1,46 +1,19 @@
 from Models.adaline import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from Dataset.datasets import Datasets
+from Dataset.datasets import ClassificationDatasets, RegressionDatasets
 from data_manager import DataManager
 import matplotlib
 matplotlib.interactive(True)
 # ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
 import random
-from Models.multi_perceptron import MultiPerceptron
-#
-# c1 = [0.5, 5.0]
-# c2 = [3.5, 1.0]
-# c3 = [6.5, 5.0]
-#
-# dataset = []
-#
-# file = open('Dataset/artificial_3C.data', 'w')
-#
-# colors = ['r', 'g', 'b']
-# for index, c in enumerate([c1, c2, c3]):
-#     datinha = []
-#     for j in range(0, 50):
-#         random1 = random.uniform(-1, 1)
-#         random2 = random.uniform(-1, 1)
-#         new_value = c.copy()
-#         new_value[0] += random1
-#         new_value[1] += random2
-#         new_value.append(index)
-#         dataset.append(new_value)
-#         file.write('%s,%s,%s\n' % (new_value[0], new_value[1], index))
-#
-# file.close()
-        # datinha.append(new_value)
-    # datinha = np.array(datinha)
-    # plt.plot(datinha[:, 0], datinha[:, 1], colors[index]+'o')
+from Models.MLP import MultiLayerPerceptron
 
-# plt.show()
-#
-# print(dataset)
-datasets = [Datasets.IRIS, Datasets.CANCER,  Datasets.DERMATOLOGY, Datasets.COLUNA]
-datasets = [Datasets.ARTIFICIAL]
-datasets = [Datasets.ARTIFICIAL, Datasets.IRIS]
+datasets = [ClassificationDatasets.IRIS,
+            ClassificationDatasets.CANCER,
+            ClassificationDatasets.DERMATOLOGY,
+            ClassificationDatasets.COLUNA,
+            ClassificationDatasets.ARTIFICIAL_XOR]
 
 for dataset in datasets:
 
@@ -52,7 +25,7 @@ for dataset in datasets:
         data_manager = DataManager(dataset)
         x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = data_manager.split_train_test_5fold()
 
-        perceptron = MultiPerceptron(activation='sigmoidal')
+        perceptron = MultiLayerPerceptron(activation='sigmoidal')
 
         for fold in range(0, 1):
 

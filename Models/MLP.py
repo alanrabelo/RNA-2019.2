@@ -7,7 +7,7 @@ import math
 
 class MultiLayerPerceptron():
 
-    def __init__(self, epochs=200, learning_rate=0.05, activation='sigmoid', hidden_number=10):
+    def __init__(self, epochs=200, learning_rate=0.1, activation='sigmoid', hidden_number=10):
         self.epochs = epochs
         self.weights = []
         self.hidden_weights = []
@@ -39,18 +39,26 @@ class MultiLayerPerceptron():
 
         return np.array(y_sig)
 
-    def fit(self, x, Y, dataset, error_graph=True, epochs=200):
+    def updateEta(self, epoch):
+        eta_i = 0.2
+        eta_f = 0.05
+        eta = eta_i * ((eta_f / eta_i) ** (epoch / self.epochs))
+        self.learning_rate = eta
+        # self.learning_rate = 0.1
+
+    def fit(self, x, Y, dataset, error_graph=True, epochs=300):
 
         self.number_of_classes = len(set([str(output) for output in Y]))
 
-        hidden_weights = np.random.uniform(low=-1, high=1, size=(len(x[0]) + 1, self.hidden_number))
-        weights = np.random.uniform(low=-1, high=1, size=(self.hidden_number, self.number_of_classes))
+        hidden_weights = np.random.uniform(low=-1.0, high=1.0, size=(len(x[0]) + 1, self.hidden_number))
+        weights = np.random.uniform(low=-1.0, high=1.0, size=(self.hidden_number, self.number_of_classes))
         # hidden_weights = np.zeros((len(x[0]) + 1, self.hidden_number))
         # weights = np.zeros((self.hidden_number, self.number_of_classes))
 
         errors_in_epochs = []
         for epoch in range(epochs):
 
+            self.updateEta(epoch)
             error_count = 0
 
             for index, input_x in enumerate(x):
@@ -156,7 +164,7 @@ class MultiLayerPerceptron():
 
         # giving a title to my graph
         # function to show the plot
-        plt.savefig('Errors' + dataset+'.png', bbox_inches='tight')
+        plt.savefig('Plots/Errors/Errors' + dataset+'.png', bbox_inches='tight')
         plt.close()
 
 

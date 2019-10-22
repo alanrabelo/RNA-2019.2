@@ -1,9 +1,13 @@
 from enum import Enum
 
-class Datasets(Enum):
+class ClassificationDatasets(Enum):
     IRIS = 'iris.data'
-    CANCER = 'breast-cancer-wisconsin.data'
     COLUNA = 'column_3C.data'
     DERMATOLOGY = 'dermatology.data'
-    ARTIFICIAL = 'artificial_3C.data'
+    CANCER = 'breast-cancer-wisconsin.data'
     ARTIFICIAL_XOR = 'artificial_XOR.data'
+
+class RegressionDatasets(Enum):
+    MOTOR = 'pmsm_temperatura_data.csv'
+    FUEL = 'measurements.csv'
+    ABALONE = 'abalone.csv'
