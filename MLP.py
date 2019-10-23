@@ -7,12 +7,12 @@ ClassificationDatasets.COLUNA,
 ClassificationDatasets.DERMATOLOGY,
 ClassificationDatasets.CANCER,
 ClassificationDatasets.ARTIFICIAL_XOR]
-datasets = [ClassificationDatasets.IRIS, ClassificationDatasets.ARTIFICIAL_XOR]
+datasets = [ClassificationDatasets.IRIS]
 # datasets = [Datasets.IRIS, Datasets.ARTIFICIAL_XOR]
 NUMBER_OF_FOLDS = 5
-NUMBER_OF_REALIZATIONS = 5
+NUMBER_OF_REALIZATIONS = 3
 
-NEURONS_RANGE = range(3, 15, 2)
+# NEURONS_RANGE = range(3, 6, 2)
 NEURONS_RANGE = [5, 12]
 
 for dataset in datasets:
@@ -38,9 +38,9 @@ for dataset in datasets:
                 result = perceptron.fit(x_TRAINS[i], y_TRAINS[i], dataset.value, error_graph=True, epochs=500)
                 perceptron.weights, perceptron.hidden_weights = result
 
-                correctness = perceptron.evaluate(x_TESTS[i], y_TESTS[i], should_print_confusion_matrix=True if index == 4 and i == 0 else False)
+                correctness = perceptron.evaluate(x_TESTS[i], y_TESTS[i], should_print_confusion_matrix=True if index == 0 and i == 0 else False)
                 correctness_sum += correctness
-                if index == 0:
+                if index == 0 and i == 0:
                     perceptron.plot_decision_surface(x_TRAINS[i], y_TRAINS[i], x_TESTS[i], y_TESTS[i], 'MLP - '+dataset.value)
 
         results[str(number_of_neurons)] = correctness_sum/(NUMBER_OF_FOLDS*NUMBER_OF_REALIZATIONS)
