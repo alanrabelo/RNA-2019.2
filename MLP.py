@@ -7,13 +7,13 @@ ClassificationDatasets.COLUNA,
 ClassificationDatasets.DERMATOLOGY,
 ClassificationDatasets.CANCER,
 ClassificationDatasets.ARTIFICIAL_XOR]
-datasets = [ClassificationDatasets.IRIS]
+# datasets = [ClassificationDatasets.IRIS]
 # datasets = [Datasets.IRIS, Datasets.ARTIFICIAL_XOR]
 NUMBER_OF_FOLDS = 5
-NUMBER_OF_REALIZATIONS = 3
-NUMBER_OF_EPOCHS = 200
+NUMBER_OF_REALIZATIONS = 20
+NUMBER_OF_EPOCHS = 500
 # NEURONS_RANGE = range(3, 6, 2)
-NEURONS_RANGE = [5, 12]
+NEURONS_RANGE = [3, 5, 7, 9, 12, 15]
 
 for dataset in datasets:
 
