@@ -11,7 +11,7 @@ datasets = [ClassificationDatasets.IRIS]
 # datasets = [Datasets.IRIS, Datasets.ARTIFICIAL_XOR]
 NUMBER_OF_FOLDS = 5
 NUMBER_OF_REALIZATIONS = 3
-
+NUMBER_OF_EPOCHS = 200
 # NEURONS_RANGE = range(3, 6, 2)
 NEURONS_RANGE = [5, 12]
 
@@ -35,20 +35,21 @@ for dataset in datasets:
             for i in range(0, NUMBER_OF_FOLDS):
 
                 perceptron = MultiLayerPerceptron(hidden_number=number_of_neurons)
-                result = perceptron.fit(x_TRAINS[i], y_TRAINS[i], dataset.value, error_graph=True, epochs=500)
+                result = perceptron.fit(x_TRAINS[i], y_TRAINS[i], dataset.value, error_graph=True, epochs=NUMBER_OF_EPOCHS)
                 perceptron.weights, perceptron.hidden_weights = result
 
-                correctness = perceptron.evaluate(x_TESTS[i], y_TESTS[i], should_print_confusion_matrix=True if index == 0 and i == 0 else False)
+                # correctness = perceptron.evaluate(x_TESTS[i], y_TESTS[i], should_print_confusion_matrix=True if index == 0 and i == 0 else False)
+                correctness = perceptron.evaluate(x_TESTS[i], y_TESTS[i], should_print_confusion_matrix=False)
                 correctness_sum += correctness
-                if index == 0 and i == 0:
-                    perceptron.plot_decision_surface(x_TRAINS[i], y_TRAINS[i], x_TESTS[i], y_TESTS[i], 'MLP - '+dataset.value)
+                # if index == 0 and i == 0:
+                #     perceptron.plot_decision_surface(x_TRAINS[i], y_TRAINS[i], x_TESTS[i], y_TESTS[i], 'MLP - '+dataset.value)
 
         results[str(number_of_neurons)] = correctness_sum/(NUMBER_OF_FOLDS*NUMBER_OF_REALIZATIONS)
 
-    best_combination = sorted(results.items(), key=lambda x: x[0], reverse=True)[0]
+    best_combination = sorted(results.items(), key=lambda x: x[0], reverse=False)[0]
     print(str(best_combination) + ' best combination for ' + dataset.value)
     perceptron = MultiLayerPerceptron(hidden_number=int(best_combination[0]))
-    results = perceptron.fit(x_TRAINNING, y_TRAINNING, dataset.value, error_graph=True, epochs=500)
+    results = perceptron.fit(x_TRAINNING, y_TRAINNING, dataset.value, error_graph=True, epochs=NUMBER_OF_EPOCHS)
     perceptron.weights, perceptron.hidden_weights = results
 
     result = perceptron.evaluate(x_VALIDATION, y_VALIDATION, should_print_confusion_matrix=True)

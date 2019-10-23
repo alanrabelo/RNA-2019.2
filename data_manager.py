@@ -50,6 +50,7 @@ class DataManager:
             scaler = MinMaxScaler(feature_range=(0, 1))
             x = scaler.fit_transform(self.X)
             self.X = x
+            self.Y = self.one_hot_encoding(self.Y)
 
     def one_hot_encoding(self, y_labels):
 
@@ -68,9 +69,7 @@ class DataManager:
 
     def split_train_test_5fold(self, X, Y, validation=False, hasvalidation=False):
 
-        encoded_Y = self.one_hot_encoding(Y) if hasvalidation else Y
-
-        c = list(zip(np.array(X), np.array(encoded_Y)))
+        c = list(zip(np.array(X), np.array(Y)))
         random.shuffle(c)
         X_shuffled, Y_shuffled = zip(*c)
 
