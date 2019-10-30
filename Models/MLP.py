@@ -51,7 +51,7 @@ class MultiLayerPerceptron():
         self.number_of_classes = len(set([str(output) for output in Y]))
 
         hidden_weights = np.random.uniform(low=-1.0, high=1.0, size=(len(x[0]) + 1, self.hidden_number))
-        weights = np.random.uniform(low=-1.0, high=1.0, size=(self.hidden_number, self.number_of_classes))
+        weights = np.random.uniform(low=-1.0, high=1.0, size=(self.hidden_number+1, self.number_of_classes))
         # hidden_weights = np.zeros((len(x[0]) + 1, self.hidden_number))
         # weights = np.zeros((self.hidden_number, self.number_of_classes))
 
@@ -70,6 +70,8 @@ class MultiLayerPerceptron():
 
                 h = self.sigmoid(uh)
                 h_ = self.sigmoid_(h)
+
+                h = np.insert(h, 0, -1)
 
                 uy = h.dot(weights)
                 y = self.sigmoid(uy)
