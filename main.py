@@ -12,7 +12,9 @@ for dataset in datasets:
     for index in range(0, 1):
 
         manager = DataManager(dataset.value)
-        x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = manager.split_train_test_5fold()
+        manager.load_data()
+
+        x_TRAINS, y_TRAINS, x_TESTS, y_TESTS = manager.split_train_test_5fold(manager.X, manager.Y)
         error_average = 0
 
         for i in range(0, 1):
@@ -23,8 +25,8 @@ for dataset in datasets:
 
             error_average += perceptron.evaluate(x_TESTS[i], y_TESTS[i], should_print_confusion_matrix=True if index == 4 and i == 0 else False)
 
-            if i == 4:
-                perceptron.plot_decision_surface(dataset.value, dataset.value)
+            # if i == 4:
+            #     perceptron.plot_decision_surface(dataset.value, dataset.value)
 
         results.append(error_average/5.0)
 

@@ -101,7 +101,7 @@ class DataManager:
             x_TESTS.append(np.array(X_shuffled[split_point1:split_point2]))
             y_TESTS.append(np.array(Y_shuffled[split_point1:split_point2]))
 
-        if not hasvalidation:
+        if hasvalidation:
             return np.array(x_TRAINS)[0], np.array(y_TRAINS)[0], np.array(x_TESTS)[0], np.array(y_TESTS)[0]
         else:
             return np.array(x_TRAINS), np.array(y_TRAINS), np.array(x_TESTS), np.array(y_TESTS)

@@ -7,7 +7,7 @@ import math
 
 class MultiLayerPerceptron():
 
-    def __init__(self, epochs=200, learning_rate=0.1, activation='sigmoid', hidden_number=10):
+    def __init__(self, epochs=200, learning_rate=0.5, activation='sigmoid', hidden_number=10):
         self.epochs = epochs
         self.weights = []
         self.hidden_weights = []
@@ -16,48 +16,48 @@ class MultiLayerPerceptron():
         self.hidden_number = hidden_number
 
 
-    def sigmoid(self, x):
+    def sigmoid(self, u):
 
-        y_sig = []
+        array = np.array(u)
 
-        for value in x:
-            try:
-                result = 1 / (1 + math.exp(-value))
-            except:
-                result = 0
-            y_sig.append(result)
+        if self.activation == 'logistic':
+            y = 1.0 / (1.0 + np.exp(-array))
+        elif self.activation == 'tanh':
+            y = np.tanh(array)
+        else:
+            raise ValueError('Error in function!')
+        return y
 
-        return np.array(y_sig)
+    def sigmoid_(self, u):
 
-    def sigmoid_(self, x):
-
-        y_sig = []
-
-        for value in x:
-            result = value * (1 - value)
-            y_sig.append(result)
-
-        return np.array(y_sig)
+        if self.activation == 'logistic':
+            y_ = u * (1.0 - u)
+        elif self.activation == 'tanh':
+            y_ = 1.0 - (u * u)
+        else:
+            raise ValueError('Error in derivate!')
+        return y_
 
     def updateEta(self, epoch):
-        eta_i = 0.2
-        eta_f = 0.05
+        eta_i = 0.1
+        eta_f = eta_i * 0.5
         eta = eta_i * ((eta_f / eta_i) ** (epoch / self.epochs))
         self.learning_rate = eta
-        # self.learning_rate = 0.1
 
     def fit(self, x, Y, dataset, error_graph=True, epochs=300):
 
         self.number_of_classes = len(set([str(output) for output in Y]))
+        x_shape = np.shape(x)[1]
 
-        hidden_weights = np.random.uniform(low=-1.0, high=1.0, size=(len(x[0]) + 1, self.hidden_number))
-        weights = np.random.uniform(low=-1.0, high=1.0, size=(self.hidden_number, self.number_of_classes))
-        # hidden_weights = np.zeros((len(x[0]) + 1, self.hidden_number))
-        # weights = np.zeros((self.hidden_number, self.number_of_classes))
+        hidden_weights = np.random.random(size=(x_shape + 1, self.hidden_number))
+        hidden_weights -= 0.5
+        hidden_weights *= 2
+        weights = np.random.uniform(size=(self.hidden_number+1, self.number_of_classes))
+        weights -= 0.5
+        weights *= 2
 
         errors_in_epochs = []
         for epoch in range(epochs):
-
             self.updateEta(epoch)
             error_count = 0
 
@@ -70,6 +70,8 @@ class MultiLayerPerceptron():
 
                 h = self.sigmoid(uh)
                 h_ = self.sigmoid_(h)
+                h = np.insert(h, 0, -1)
+                h_ = np.insert(h_, 0, -1)
 
                 uy = h.dot(weights)
                 y = self.sigmoid(uy)
@@ -96,7 +98,7 @@ class MultiLayerPerceptron():
                 factor1 = np.array([e * y_]).transpose()
                 e_hidden = np.array(weights).dot(factor1)
 
-                update_hidden = h__transp * e_hidden
+                update_hidden = h__transp[1:] * e_hidden[1:]
                 update_hidden = update_hidden.dot(x_transp).transpose()
 
                 hidden_weights += self.learning_rate * update_hidden
@@ -105,16 +107,19 @@ class MultiLayerPerceptron():
         if error_graph:
             self.plot_error_graph(errors_in_epochs, dataset)
 
-        return weights, hidden_weights
+        self.weights = weights
+        self.hidden_weights = hidden_weights
 
     def predict(self, data_input):
 
         data_input = np.insert(data_input, 0, -1)
         uh = data_input.dot(self.hidden_weights)
         h = self.sigmoid(uh)
+        h = np.insert(h, 0, -1)
+
         u = np.array(self.weights).transpose().dot(h)
 
-        y_sig = list(self.sigmoid_(u))
+        y_sig = list(self.sigmoid(u))
         y = list(np.zeros(self.number_of_classes, dtype=int))
         y[y_sig.index(max(y_sig))] = 1
 
@@ -134,7 +139,7 @@ class MultiLayerPerceptron():
             if not sum(error**2) == 0:
                 error_count += 1
 
-            desired_str = str(desired)
+            desired_str = str(list(desired))
             output_str = str(output)
 
             if desired_str in confusion_matrix:
