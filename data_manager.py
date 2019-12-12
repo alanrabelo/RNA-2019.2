@@ -2,6 +2,7 @@ import random
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from Dataset.datasets import RegressionDatasets, ClassificationDatasets
+import pandas as pd
 
 class DataManager:
 
@@ -17,46 +18,83 @@ class DataManager:
 
     def load_data(self, categorical=True):
 
-        with open('Dataset/' + self.filename.value, 'r') as file:
-            self.X = []
-            self.Y = []
-            categorical = {}
+        values = self.read_data(self.filename)
+        self.X = []
+        self.Y = []
+        categorical = {}
 
-            for line in file.readlines():
-                if line == '' or '?' in line:
+        for value in values:
+
+            if self.filename == RegressionDatasets.FUEL:
+                output = value[1]
+                input = list(value[1:])
+                input.append(value[0])
+                input = np.array(input)
+            else:
+                output = value[-1]
+                input = value[:-1]
+
+            input_formatted = []
+
+            for value in input:
+                try:
+                    formatted = float(value)
+                    input_formatted.append(formatted)
+                except:
                     continue
-                input_formatted = []
 
-                line = line.replace('\n', '')
-                split_line = line.split(' ' if self.filename == ClassificationDatasets.COLUNA else ',')
+            self.X.append(input_formatted)
 
-                output = split_line[-1]
-                input = split_line[:-1]
-
-
-                for value in input:
-                    try:
-                        formatted = float(value)
-                        input_formatted.append(formatted)
-                    except:
-                        continue
-
-                self.X.append(input_formatted)
-
+            if categorical:
                 if output in categorical:
                     self.Y.append(categorical[output])
                 else:
                     categorical[output] = len(categorical.keys())
                     self.Y.append(categorical[output])
+            else:
+                self.Y.append(output)
 
             if self.filename == ClassificationDatasets.CANCER:
                 self.X = list(np.array(self.X)[:, 1:])
-            scaler = MinMaxScaler(feature_range=(0, 1))
-            x = scaler.fit_transform(self.X)
-            self.X = x
+
+            self.X = self.scale(self.X)
 
             if categorical:
                 self.Y = self.one_hot_encoding(self.Y)
+
+
+    def read_data(self, filename):
+        if 'csv' in self.filename.value:
+
+            if filename == RegressionDatasets.FUEL:
+                df = pd.read_csv('Dataset/' + self.filename.value, sep=',', decimal=',', header=0)
+                df = df.dropna(axis=1, how="any")
+                df['gas_type'] = pd.Categorical(df.gas_type).codes
+            elif filename == RegressionDatasets.ABALONE:
+                df = pd.read_csv('Dataset/' + self.filename.value, sep=',', header=None)
+                df.dropna(axis='columns')
+            return df.values
+
+        else:
+            with open('Dataset/' + self.filename.value, 'r') as file:
+
+                values = []
+
+                for line in file.readlines():
+                    if line == '' or '?' in line:
+                        continue
+                    input_formatted = []
+
+                    line = line.replace('\n', '')
+                    split_line = line.split(' ' if self.filename == ClassificationDatasets.COLUNA else ',')
+                    values.append(split_line)
+
+                return values
+
+    def scale(self, X):
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        x_scaled = scaler.fit_transform(X)
+        return list(x_scaled)
 
     def one_hot_encoding(self, y_labels):
 

@@ -1,3 +1,4 @@
+distance,consume,speed,temp_inside,temp_outside,specials,gas_type,AC,rain,sun,refill_liters,refill_gas,
 28,5,26,"21,5",12,,E10,0,0,0,45,E10
 12,"4,2",30,"21,5",13,,E10,0,0,0,,
 "11,2","5,5",38,"21,5",15,,E10,0,0,0,,

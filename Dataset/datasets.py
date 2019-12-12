@@ -10,4 +10,5 @@ class ClassificationDatasets(Enum):
 class RegressionDatasets(Enum):
     MOTOR = 'pmsm_temperatura_data.csv'
     FUEL = 'measurements.csv'
-    ABALONE = 'abalone.csv'
+    ABALONE = 'abalone.csv' # número de ríngs - última coluna
+    ARTIFICIAL = 'regression.data'

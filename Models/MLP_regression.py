@@ -5,13 +5,13 @@ plt.style.use('seaborn-whitegrid')
 import math
 
 
-class MultiLayerPerceptron():
+class MultiLayerPerceptronRegressor():
 
-    def __init__(self, epochs=200, learning_rate=0.5, activation='sigmoid', hidden_number=10):
+    def __init__(self, epochs=200, learning_rate=0.5, activation='tanh', hidden_number=10):
         self.epochs = epochs
         self.weights = []
         self.hidden_weights = []
-        self.learning_rate = learning_rate
+        self.initial_learning_rate = learning_rate
         self.activation = activation
         self.hidden_number = hidden_number
 
@@ -39,10 +39,10 @@ class MultiLayerPerceptron():
         return y_
 
     def updateEta(self, epoch):
-        eta_i = 0.1
-        eta_f = eta_i * 0.5
+        eta_i = self.initial_learning_rate
+        eta_f = 0.05
         eta = eta_i * ((eta_f / eta_i) ** (epoch / self.epochs))
-        self.learning_rate = eta
+        self.learning_rate = self.initial_learning_rate
 
     def fit(self, x, Y, dataset, error_graph=True, epochs=300):
 
@@ -52,14 +52,14 @@ class MultiLayerPerceptron():
         hidden_weights = np.random.random(size=(x_shape + 1, self.hidden_number))
         hidden_weights -= 0.5
         hidden_weights *= 2
-        weights = np.random.uniform(size=(self.hidden_number+1, self.number_of_classes))
+        weights = np.random.uniform(size=(self.hidden_number+1, 1))
         weights -= 0.5
         weights *= 2
 
         errors_in_epochs = []
         for epoch in range(epochs):
             self.updateEta(epoch)
-            error_count = 0
+            error_sum = 0
 
             for index, input_x in enumerate(x):
 
@@ -74,23 +74,18 @@ class MultiLayerPerceptron():
                 h_ = np.insert(h_, 0, -1)
 
                 uy = h.dot(weights)
-                y = self.sigmoid(uy)
-                y_ = self.sigmoid_(y)
+                y = uy
+                y_ = 1
 
                 d = Y[index]
-                e = d - y
+                e = float(d) - float(y)
 
-                output = list(np.zeros(self.number_of_classes, dtype=int))
-                output[list(y).index(max(y))] = 1
-
-                error = d - output
-                if sum(error**2) > 0:
-                    error_count += 1
+                error_sum += e**2
 
                 # BACKPROPAGATION OUTPUT
                 h_transp = np.array([h]).transpose()
                 update = np.dot(h_transp, [e * y_])
-                weights += update * self.learning_rate
+                weights += np.array([update]).transpose() * self.learning_rate
 
                 # BACKPROPAGATION HIDDEN
                 h__transp = np.array([h_]).transpose()
@@ -98,11 +93,11 @@ class MultiLayerPerceptron():
                 factor1 = np.array([e * y_]).transpose()
                 e_hidden = np.array(weights).dot(factor1)
 
-                update_hidden = h__transp[1:] * e_hidden[1:]
-                update_hidden = update_hidden.dot(x_transp).transpose()
+                update_hidden = h_[1:] * e_hidden[1:]
+                update_hidden = np.array([update_hidden]).transpose().dot([input_x])
 
-                hidden_weights += self.learning_rate * update_hidden
-            errors_in_epochs.append(1 - (error_count/len(x)))
+                hidden_weights += self.learning_rate * update_hidden.transpose()
+            errors_in_epochs.append(error_sum)
 
         if error_graph:
             self.plot_error_graph(errors_in_epochs, dataset)
@@ -118,42 +113,21 @@ class MultiLayerPerceptron():
         h = np.insert(h, 0, -1)
 
         u = np.array(self.weights).transpose().dot(h)
-
-        y_sig = list(self.sigmoid(u))
-        y = list(np.zeros(self.number_of_classes, dtype=int))
-        y[y_sig.index(max(y_sig))] = 1
-
-        return y
+        return float(u[0])
 
     def evaluate(self, X, Y, should_print_confusion_matrix=False):
 
-        error_count = 0
-        confusion_matrix = {}
+        error_sum = 0
+        number_of_inputs = len(X)
 
         for index, input in enumerate(X):
 
-            desired = Y[index]
+            desired = float(Y[index])
             output = self.predict(input)
             error = desired - output
+            error_sum += error ** 2
 
-            if not sum(error**2) == 0:
-                error_count += 1
-
-            desired_str = str(list(desired))
-            output_str = str(output)
-
-            if desired_str in confusion_matrix:
-                if output_str in confusion_matrix[desired_str]:
-                    confusion_matrix[desired_str][output_str] += 1
-                else:
-                    confusion_matrix[desired_str][output_str] = 1
-            else:
-                confusion_matrix[desired_str] = {output_str: 1}
-
-        if should_print_confusion_matrix:
-            print('Matriz de confusão: \n%s' % confusion_matrix)
-
-        return (1 - (error_count / len(Y))) * 100
+        return error_sum/number_of_inputs, (error_sum ** 0.5) / number_of_inputs
 
     def plot_error_graph(self, errors, dataset):
         x = np.linspace(0, len(errors), len(errors))
