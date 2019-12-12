@@ -15,6 +15,8 @@ datasets = [ClassificationDatasets.IRIS,
             ClassificationDatasets.COLUNA,
             ClassificationDatasets.ARTIFICIAL_XOR]
 
+datasets = [ClassificationDatasets.IRIS,]
+
 for dataset in datasets:
 
     perceptron_results = []
@@ -29,10 +31,10 @@ for dataset in datasets:
 
         for fold in range(0, 1):
 
-            # result = perceptron.fit(x_TRAINS[fold], y_TRAINS[fold], dataset.value, error_graph=True)
-            # perceptron.weights = result
-            # perceptron_results.append(perceptron.evaluate(x_TESTS[fold], y_TESTS[fold]))
-            perceptron.plot_decision_surface(x_TRAINS[fold], x_TESTS[fold], y_TRAINS[fold], y_TESTS[fold], name=dataset)
+            result = perceptron.fit(x_TRAINS[fold], y_TRAINS[fold], dataset.value, error_graph=True)
+            perceptron.weights = result
+            perceptron_results.append(perceptron.evaluate(x_TESTS[fold], y_TESTS[fold]))
+            # perceptron.plot_decision_surface(x_TRAINS[fold], x_TESTS[fold], y_TRAINS[fold], y_TESTS[fold], name=dataset)
 
     print(dataset)
     print('Accuracy: %.2f' % np.average(perceptron_results))

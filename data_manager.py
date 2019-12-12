@@ -73,9 +73,9 @@ class DataManager:
 
         return np.array(result, dtype=int)
 
-    def split_train_test_5fold(self, X, Y, validation=False, hasvalidation=False):
+    def split_train_test_5fold(self, validation=False, hasvalidation=False):
 
-        c = list(zip(np.array(X), np.array(Y)))
+        c = list(zip(np.array(self.X), np.array(self.Y)))
         random.shuffle(c)
         X_shuffled, Y_shuffled = zip(*c)
 
@@ -84,7 +84,7 @@ class DataManager:
         x_TESTS = []
         y_TESTS = []
 
-        validation_split_point = round(len(X) * self.validations_percentage) if validation else 0
+        validation_split_point = round(len(self.X) * self.validations_percentage) if validation else 0
         validation_X = X_shuffled[:validation_split_point]
         validation_Y = Y_shuffled[:validation_split_point]
 
