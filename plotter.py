@@ -104,18 +104,23 @@ class Plotter:
         predicted = [model.predict(x) for x in x_VALIDATION[0]]
         plt.plot(x_TRAIN[0], y_TRAIN[0], 'ro')
         plt.plot(X, Y)
-        plt.show()
+        plt.savefig('Plots/Regression/'+name+'-original.png')
         plt.close()
         plt.plot(x_TRAIN[0], y_TRAIN[0], 'ro')
         plt.plot(X, Y)
         plt.plot(x_VALIDATION[0], predicted, 'go')
-        plt.show()
+        plt.savefig('Plots/Regression/'+name+'-result.png')
 
 
-models = [
-    ('MLP', MultiLayerPerceptron(hidden_number=15, epochs=50, learning_rate=0.01, activation='tanh')),
-    ('RBF', RBFClassification(35, 2)),
-    ('ELM', ELM(200))
+classif_models = [
+    # ('MLP', MultiLayerPerceptron(hidden_number=15, epochs=500, learning_rate=0.01, activation='tanh')),
+    ('ELM', RBFClassification(50, 5)),
+    # ('ELM', ELM(1000))
+]
+regress_models = [
+    # ('MLP', MultiLayerPerceptronRegressor(hidden_number=35, epochs=600, learning_rate=0.01, activation='tanh')),
+    ('RBF', RBF(50, 5)),
+    # ('ELM', ELM(1000))
 ]
 
 datasets_class = [
@@ -125,6 +130,9 @@ datasets_class = [
     ClassificationDatasets.COLUNA,
     ClassificationDatasets.ARTIFICIAL_XOR,
 ]
+regression_datasets= [
+    RegressionDatasets.ARTIFICIAL,
+]
 
 for dataset in datasets_class:
 
@@ -133,5 +141,15 @@ for dataset in datasets_class:
     x_TRAIN, y_TRAIN, x_VALIDATION, y_VALIDATION = data_manager.split_train_test_5fold(data_manager.X,
                                                                                            data_manager.Y)
 
-    for name, model in models:
+    for name, model in classif_models:
         Plotter.plot(model, x_TRAIN[0], y_TRAIN[0], x_VALIDATION[0], y_VALIDATION[0], name + '-' + dataset.name)
+
+# for dataset in regression_datasets:
+#
+#     data_manager = DataManager(dataset)
+#     data_manager.load_data(categorical=True)
+#     x_TRAIN, y_TRAIN, x_VALIDATION, y_VALIDATION = data_manager.split_train_test_5fold(data_manager.X,
+#                                                                                            data_manager.Y)
+#
+#     for name, model in regress_models:
+#         Plotter.decision_surface(model, name)

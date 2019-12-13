@@ -97,7 +97,33 @@ def cross_validation():
         print('MSE: %.2f' % np.average(rmse))
         print('MSE Std: %.2f' % np.std(rmse))
 
-cross_validation()
+
+def run():
+
+    for dataset in datasets:
+        print('INICIANDO VALIDAÇÃO PARA O %s' % dataset.name)
+
+        hit_sum = []
+        data_manager = DataManager(dataset)
+        data_manager.load_data(categorical=False)
+
+        for i in range(1, 20):
+            x_TRAIN, y_TRAIN, x_VALIDATION, y_VALIDATION = data_manager.split_train_test_5fold(data_manager.X,
+                                                                                                   data_manager.Y)
+
+            for fold in range(0, 5):
+
+                rbf = RBF(number_of_centroids=50, sigma=6)
+                rbf.fit(x_TRAIN[fold], y_TRAIN[fold])
+                hit_sum.append(rbf.evaluate(x_VALIDATION[fold], y_VALIDATION[fold]))
+
+        rmse = np.square(hit_sum)
+        print('MSE: %.2f' % np.average(hit_sum))
+        print('MSE Std: %.2f' % np.std(hit_sum))
+        print('RMSE: %.2f' % np.average(rmse))
+        print('R0.0MSE Std: %.2f' % np.std(rmse))
+
+run()
 # input, output = generate_f2()
 # # ax = plt.axes(projection="3d")
 #

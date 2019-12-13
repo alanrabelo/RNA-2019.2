@@ -1,64 +1,22 @@
-from Dataset.datasets import RegressionDatasets
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from Dataset.datasets import ClassificationDatasets, RegressionDatasets
 from data_manager import DataManager
 import matplotlib
 matplotlib.interactive(True)
 # ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
+import random
 from ELM import ELM
 import collections
 import numpy as np
 
 datasets = [
-    RegressionDatasets.ARTIFICIAL,
-    RegressionDatasets.ABALONE,
-    RegressionDatasets.FUEL,
-    RegressionDatasets.MOTOR,
+    ClassificationDatasets.ARTIFICIAL_XOR,
+    ClassificationDatasets.IRIS,
+    ClassificationDatasets.CANCER,
+    ClassificationDatasets.DERMATOLOGY,
+    ClassificationDatasets.COLUNA,
 ]
-
-def cross_validation():
-
-    for dataset in datasets:
-        print('INICIANDO VALIDAÇÃO PARA O %s' % dataset.name)
-
-        hit_sum_test = []
-        data_manager = DataManager(dataset)
-        data_manager.load_data(categorical=False)
-
-        for index in range(0, 20):
-            x_TRAIN, y_TRAIN, x_VALIDATION, y_VALIDATION = data_manager.split_train_test_5fold(data_manager.X,
-                                                                                           data_manager.Y)
-            hit_sum = []
-
-            for fold in range(0, 5):
-                rbf = ELM(number_of_hidden=1000)
-                rbf.fit(x_TRAIN[fold], y_TRAIN[fold])
-                hit_sum.append(rbf.evaluate(x_VALIDATION[fold], y_VALIDATION[fold]))
-
-            hit_sum_test.append(np.average(hit_sum))
-
-
-        print('Accuracy: %.2f' % np.average(hit_sum_test))
-        print('Min: %.2f' % np.min(hit_sum_test))
-        print('Max: %.2f' % np.max(hit_sum_test))
-        print('Stand De: %.2f%%' % np.std(hit_sum_test))
-
-
-def decision_surface():
-
-    for dataset in datasets:
-        print('INICIANDO o plot da superfície de decisão PARA O %s' % dataset.value)
-
-        data_manager = DataManager(dataset)
-        data_manager.load_data()
-
-        x_TRAIN, y_TRAIN, x_VALIDATION, y_VALIDATION = data_manager.split_train_test_5fold(data_manager.X,
-                                                                                           data_manager.Y)
-
-        validation_perceptron = ELM(number_of_hidden=4)
-        # validation_perceptron.fit(x_TRAIN[0], y_TRAIN[0], dataset.value, epochs=300)
-        # validation_perceptron.evaluate(x_VALIDATION[0], y_VALIDATION[0], should_print_confusion_matrix=True)
-        # validation_perceptron.plot_decision_surface(x_TRAIN[0], y_TRAIN[0], x_VALIDATION[0], y_VALIDATION[0], dataset.value)
-
-# cross_validation()
 
 def run():
 
@@ -67,23 +25,22 @@ def run():
 
         hit_sum = []
         data_manager = DataManager(dataset)
-        data_manager.load_data(categorical=False)
+        data_manager.load_data(categorical=True)
 
-        for i in range(1, 2):
+        for i in range(0, 10):
             x_TRAIN, y_TRAIN, x_VALIDATION, y_VALIDATION = data_manager.split_train_test_5fold(data_manager.X,
                                                                              data_manager.Y)
 
-            for fold in range(0, 2):
+            for fold in range(0, 5):
 
                 rbf = ELM(number_of_hidden=1000)
                 rbf.fit(x_TRAIN[fold], y_TRAIN[fold])
                 hit_sum.append(rbf.evaluate(x_VALIDATION[fold], y_VALIDATION[fold]))
 
-        rmse = np.power(hit_sum, 0.5)
-        print('MSE: %.25f' % np.average(hit_sum))
-        print('MSE Std: %.25f' % np.std(hit_sum))
-        print('RMSE: %.25f' % np.average(rmse))
-        print('R0.0MSE Std: %.25f' % np.std(rmse))
+        print('Accuracy: %.2f' % np.average(hit_sum))
+        print('Min: %.2f' % np.min(hit_sum))
+        print('Max: %.2f' % np.max(hit_sum))
+        print('Stand De: %.2f%%' % np.std(hit_sum))
 
 run()
 # input, output = generate_f2()
