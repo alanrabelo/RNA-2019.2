@@ -5,10 +5,11 @@ class ClassificationDatasets(Enum):
     COLUNA = 'column_3C.data'
     DERMATOLOGY = 'dermatology.data'
     CANCER = 'breast-cancer-wisconsin.data'
-    ARTIFICIAL_XOR = 'artificial_XOR.data'
+    ARTIFICIAL_XOR = 'XOR.data'
 
 class RegressionDatasets(Enum):
-    MOTOR = 'pmsm_temperatura_data.csv'
+    MOTOR = 'pmsm_temperature_data.csv'
     FUEL = 'measurements.csv'
     ABALONE = 'abalone.csv' # número de ríngs - última coluna
     ARTIFICIAL = 'regression.data'
+

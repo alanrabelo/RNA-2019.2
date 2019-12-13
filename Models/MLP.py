@@ -44,7 +44,7 @@ class MultiLayerPerceptron():
         eta = eta_i * ((eta_f / eta_i) ** (epoch / self.epochs))
         self.learning_rate = eta
 
-    def fit(self, x, Y, dataset, error_graph=True, epochs=300):
+    def fit(self, x, Y, dataset='', error_graph=True, epochs=300):
 
         self.number_of_classes = len(set([str(output) for output in Y]))
         x_shape = np.shape(x)[1]

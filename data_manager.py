@@ -13,15 +13,13 @@ class DataManager:
         self.filename = filename
         self.X = []
         self.Y = []
-        self.load_data()
 
 
     def load_data(self, categorical=True):
-
         values = self.read_data(self.filename)
         self.X = []
         self.Y = []
-        categorical = {}
+        categories = {}
 
         for value in values:
 
@@ -29,6 +27,11 @@ class DataManager:
                 output = value[1]
                 input = list(value[1:])
                 input.append(value[0])
+                input = np.array(input)
+            elif self.filename == RegressionDatasets.MOTOR:
+                output = value[8]
+                input = list(value[9:-1])
+                [input.append(v) for v in value[0:8]]
                 input = np.array(input)
             else:
                 output = value[-1]
@@ -46,22 +49,24 @@ class DataManager:
             self.X.append(input_formatted)
 
             if categorical:
-                if output in categorical:
-                    self.Y.append(categorical[output])
+                if output in categories:
+                    self.Y.append(categories[output])
                 else:
-                    categorical[output] = len(categorical.keys())
-                    self.Y.append(categorical[output])
+                    categories[output] = len(categories.keys())
+                    self.Y.append(categories[output])
             else:
                 self.Y.append(output)
 
-            if self.filename == ClassificationDatasets.CANCER:
-                self.X = list(np.array(self.X)[:, 1:])
+        if self.filename == ClassificationDatasets.CANCER:
+            self.X = list(np.array(self.X)[:, 1:])
 
-            self.X = self.scale(self.X)
+        self.X = self.scale(self.X)
 
-            if categorical:
-                self.Y = self.one_hot_encoding(self.Y)
+        if categorical:
+            self.Y = self.one_hot_encoding(self.Y)
 
+        self.Y = np.array(self.Y, dtype=float)
+        self.X = np.array(self.X, dtype=float)
 
     def read_data(self, filename):
         if 'csv' in self.filename.value:
@@ -70,8 +75,9 @@ class DataManager:
                 df = pd.read_csv('Dataset/' + self.filename.value, sep=',', decimal=',', header=0)
                 df = df.dropna(axis=1, how="any")
                 df['gas_type'] = pd.Categorical(df.gas_type).codes
-            elif filename == RegressionDatasets.ABALONE:
-                df = pd.read_csv('Dataset/' + self.filename.value, sep=',', header=None)
+
+            else:
+                df = pd.read_csv('Dataset/' + self.filename.value, sep=',', header=0, nrows=3000)
                 df.dropna(axis='columns')
             return df.values
 

@@ -44,9 +44,10 @@ class MultiLayerPerceptronRegressor():
         eta = eta_i * ((eta_f / eta_i) ** (epoch / self.epochs))
         self.learning_rate = self.initial_learning_rate
 
-    def fit(self, x, Y, dataset, error_graph=True, epochs=300):
+    def fit(self, x, Y, dataset='', error_graph=True, epochs=300, verbose=True):
 
         self.number_of_classes = len(set([str(output) for output in Y]))
+        size_of_x = len(x)
         x_shape = np.shape(x)[1]
 
         hidden_weights = np.random.random(size=(x_shape + 1, self.hidden_number))
@@ -58,6 +59,7 @@ class MultiLayerPerceptronRegressor():
 
         errors_in_epochs = []
         for epoch in range(epochs):
+
             self.updateEta(epoch)
             error_sum = 0
 
@@ -125,9 +127,9 @@ class MultiLayerPerceptronRegressor():
             desired = float(Y[index])
             output = self.predict(input)
             error = desired - output
-            error_sum += error ** 2
+            error_sum += abs(error)
 
-        return error_sum/number_of_inputs, (error_sum ** 0.5) / number_of_inputs
+        return error_sum/number_of_inputs, ((error_sum**2) / number_of_inputs) ** 0.5
 
     def plot_error_graph(self, errors, dataset):
         x = np.linspace(0, len(errors), len(errors))
