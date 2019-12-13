@@ -24,7 +24,10 @@ class ELM:
 
     def input_to_hidden(self, x):
         a = np.dot(x, self.hidden_weights)
-        # np.insert(a, 0, -1)
+
+        y = (np.exp(u) - np.exp(-u)) / (np.exp(u) + np.exp(-u))
+
+        np.insert(a, 0, -1)
         return a
 
     def fit(self, x_train, y_train):
@@ -38,20 +41,22 @@ class ELM:
 
         Xt = np.transpose(X)
         self.output_weights = np.dot(np.linalg.pinv(np.dot(Xt, X)), np.dot(Xt, y_train))
+        print(self.output_weights.shape)
+        print('Opaaaa')
 
 
     def predict(self, x):
 
         if self.number_of_classes == 1:
-            x = self.input_to_hidden(np.insert(x, 0, -1))
+            x = self.input_to_hidden(x)
             y = np.dot(x, self.output_weights)
             return y
         else:
-            x = self.input_to_hidden(np.insert(x, 0, -1))
+            x = self.input_to_hidden(x)
             y = np.dot(x, self.output_weights)
-            output_categorical = np.zeros(np.shape(self.output_weights)[1] if len(self.output_weights.shape) > 1 else 2)
+            output_categorical = np.zeros(np.shape(self.output_weights)[1] if len(self.output_weights.shape) > 1 else 2, dtype=bool)
             output_categorical[np.argmax(y)] = 1
-            return y
+            return output_categorical
 
     def evaluate(self, input, desired):
 

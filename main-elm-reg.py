@@ -1,10 +1,10 @@
+import matplotlib
+
 from Dataset.datasets import RegressionDatasets
 from data_manager import DataManager
-import matplotlib
 matplotlib.interactive(True)
 # ['GTK3Agg', 'GTK3Cairo', 'MacOSX', 'nbAgg', 'Qt4Agg', 'Qt4Cairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg', 'TkCairo', 'WebAgg', 'WX', 'WXAgg', 'WXCairo', 'agg', 'cairo', 'pdf', 'pgf', 'ps', 'svg', 'template']
 from ELM import ELM
-import collections
 import numpy as np
 
 datasets = [
